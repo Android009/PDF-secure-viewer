@@ -1,0 +1,19 @@
+.pdf-list {
+    width: 200px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.pdf-link {
+    color: blue;
+    text-align: center;
+}
+
+.pdf-link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.left-page {
+    border: 1px solid black;
+}
