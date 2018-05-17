@@ -2,28 +2,57 @@ $(document).ready(init());
 
 function init() {
     $(".log-in-user").click(() => {
-        loadPDFs();
-        $(`.pdf-list`).css(`visibility`, `visible`)
+        loadPDFsUser();
+        $(`.pdf-list`).addClass("user-list");
     });
-    document.querySelector(".log-in-admin").addEventListener('click', () => {
-
+    $(".log-in-admin").click(() => {
+        loadPDFsAdmin();
+        $(`.pdf-list`).addClass("admin-list");
     });
 };
 
-function loadPDFs() {
+function loadPDFsAdmin() {
+    let pdfList;
+    let template = `<table class="admin-pdf-list-table">
+                    <tr>
+                        <th>File Name</th>
+                        <th>Action</th> 
+                    </tr>
+                    <tr><th colspan="2">Splitted</th></tr>`;
+    let listRequest = new XMLHttpRequest();
+    let URL = `http://localhost:3000/admin`;
+    listRequest.open('GET', URL, true);
+    listRequest.onreadystatechange = function() {
+        if (listRequest.readyState === 4) {
+            pdfList = JSON.parse(listRequest.response);
+            console.log(pdfList.splitted);
+            pdfList.splitted.forEach(element => {
+                template += `<tr><td>${element}</td><td><button class="delete-pdf">Delete</button></td></tr>`;
+            });
+            template += `<tr><th colspan="2">Not Splitted</th></tr>`;
+            pdfList.notSplitted.forEach(element => {
+                template += `<tr><td>${element}</td><td><button class="split-pdf">Split</button></td></tr>`;
+            });
+            template += "</table>";
+            $(".pdf-list").html(template);
+            // addEventsToTitles();
+        }
+    }
+    listRequest.send();
+}
+
+function loadPDFsUser() {
 
     let pdfList;
     let template = "";
     let listRequest = new XMLHttpRequest();
-    let URL = `http://localhost:3000/`;
+    let URL = `http://localhost:3000/user`;
     listRequest.open('GET', URL, true);
     listRequest.onreadystatechange = function() {
         if (listRequest.readyState === 4) {
             pdfList = JSON.parse(listRequest.response);
             pdfList.forEach(element => {
-                let punct = element.indexOf(".");
-                let sir = element.substring(0, punct);
-                template += `<p class="pdf-link">${sir}</p>`;
+                template += `<p class="pdf-link">${element}</p>`;
             });
             $(".pdf-list").html(template);
             addEventsToTitles();
