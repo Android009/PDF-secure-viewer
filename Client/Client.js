@@ -1,7 +1,19 @@
 $(document).ready(init());
 
 function init() {
+    $(".log-in-user").click(() => {
+        loadPDFs();
+        $(`.pdf-list`).css(`visibility`, `visible`)
+    });
+    document.querySelector(".log-in-admin").addEventListener('click', () => {
+
+    });
+};
+
+function loadPDFs() {
+
     let pdfList;
+    let template = "";
     let listRequest = new XMLHttpRequest();
     let URL = `http://localhost:3000/`;
     listRequest.open('GET', URL, true);
@@ -11,12 +23,14 @@ function init() {
             pdfList.forEach(element => {
                 let punct = element.indexOf(".");
                 let sir = element.substring(0, punct);
-                $(".pdf-list").append(`<p class="pdf-link">${sir}</p>`);
+                template += `<p class="pdf-link">${sir}</p>`;
             });
+            $(".pdf-list").html(template);
             addEventsToTitles();
         }
     }
     listRequest.send();
+
 };
 
 function addEventsToTitles() {
@@ -43,7 +57,7 @@ function addEventsToPageButtons() {
         let num = parseInt(document.querySelector(".pdf-view").getAttribute("pageNum"));
         drawGUI(name, num + 1);
     });
-}
+};
 
 function drawGUI(name, num) {
     //request page number
@@ -57,7 +71,6 @@ function drawGUI(name, num) {
                 </div> `;
     document.querySelector(".pdf-view").innerHTML = html;
     let URL = `http://localhost:3000/selection?name=${name}&num=${num}`;
-    console.log(document.querySelector(".left-page"));
     document.querySelector(".left-page").src = URL;
     document.querySelector(".pdf-view").setAttribute("pageNum", num);
     document.querySelector(".pdf-view").setAttribute("pdfName", name);
