@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html oncontextmenu="return false;">
 
 <head>
     <meta charset="utf-8" />
     <title>PDF Viewer</title>
     <link rel="stylesheet" type="text/css" href="Client.css" />
+    <link rel="stylesheet" href="./node_modules/pure-css-loader/dist/css-loader.css">
     <script src="jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
+    <div class="loader loader-double"></div>
     <div class="log-in">
         <button class="log-in-user">User</button>
         <button class="log-in-admin">Admin</button>

@@ -1,5 +1,23 @@
 $(document).ready(init());
 
+// document.onkeydown = function(e) {
+//     if (event.keyCode == 123) {
+//         return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+//         return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+//         return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+//         return false;
+//     }
+//     if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+//         return false;
+//     }
+// }
+
 function init() {
     $(".log-in-user").click(() => {
         loadPDFsUser();
@@ -35,10 +53,62 @@ function loadPDFsAdmin() {
             });
             template += "</table>";
             $(".pdf-list").html(template);
-            // addEventsToTitles();
+            addEventsToAdminButtons();
         }
     }
     listRequest.send();
+}
+
+function addEventsToAdminButtons() {
+    let loadingDiv = $('.loader');
+    document.querySelectorAll(".delete-pdf").forEach((e) => {
+        e.addEventListener("click", () => {
+            loadingDiv.addClass("is-active");
+            let URL = `http://localhost:3000/delete`;
+            let body = { file: e.parentElement.parentElement.firstChild.innerHTML };
+            let deleteRequest = new XMLHttpRequest();
+            deleteRequest.open('DELETE', URL, true);
+            deleteRequest.setRequestHeader("Content-Type", "application/json");
+            deleteRequest.onreadystatechange = function() {
+                if (deleteRequest.readyState === 4) {
+                    if (JSON.parse(deleteRequest.response) == "Done!") {
+                        loadingDiv.removeClass('is-active');
+                        loadPDFsAdmin();
+                    } else {
+                        alert(JSON.parse(deleteRequest.response));
+                        loadingDiv.removeClass('is-active');
+                        loadPDFsAdmin();
+                    }
+                }
+            }
+            deleteRequest.send(JSON.stringify(body));
+        });
+    });
+
+    document.querySelectorAll(".split-pdf").forEach((e) => {
+        e.addEventListener("click", () => {
+            loadingDiv.addClass("is-active");
+            let URL = `http://localhost:3000/split`;
+            let body = { file: e.parentElement.parentElement.firstChild.innerHTML };
+            let splitRequest = new XMLHttpRequest();
+            splitRequest.open('POST', URL, true);
+            splitRequest.setRequestHeader("Content-Type", "application/json");
+            splitRequest.onreadystatechange = function() {
+                if (splitRequest.readyState === 4) {
+                    if (JSON.parse(splitRequest.response) == "Done!") {
+                        loadingDiv.removeClass('is-active');
+                        loadPDFsAdmin();
+                    } else {
+                        loadingDiv.removeClass('is-active');
+                        alert(JSON.parse(splitRequest.response));
+                        loadPDFsAdmin();
+                    }
+                }
+            }
+            splitRequest.send(JSON.stringify(body));
+
+        });
+    });
 }
 
 function loadPDFsUser() {

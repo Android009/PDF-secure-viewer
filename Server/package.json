@@ -9,6 +9,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "body-parser": "^1.18.3",
         "cors": "^2.8.4",
         "express": "^4.15.3",
         "fs": "0.0.1-security",
@@ -21,6 +22,7 @@
         "pdf2text": "^1.1.0",
         "pdftk": "0.0.0-rc.0",
         "pdftotextjs": "^0.4.0",
+        "rimraf": "^2.6.2",
         "scissors": "^0.2.3"
     }
 }

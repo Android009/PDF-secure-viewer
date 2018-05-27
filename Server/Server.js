@@ -4,9 +4,15 @@ const fs = require("fs");
 const pdf2png = require("pdf2png");
 const pdf2Text = require("pdf2text");
 const scissors = require('scissors');
+const bodyParser = require("body-parser");
+const rimraf = require("rimraf");
 const app = express();
-let totalPages;
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+let totalPages;
+
 
 app.listen(3000, function() {
     console.log("App listening on port 3000!");
@@ -41,7 +47,6 @@ app.get("/admin", (req, res) => {
                 adminList.notSplitted.push(sir);
             }
         })
-        console.log(adminList);
         res.json(adminList);
     })
 })
@@ -68,6 +73,47 @@ app.get("/selection", (req, res) => {
     });
 
 })
+
+app.post("/split", (req, res) => {
+    let i = 1;
+    let name = req.body.file;
+    var pdf = scissors(`./pdf/${name}.pdf`);
+    pdf.getNumPages().then(e => {
+        split(res, e, name, pdf);
+    });
+    let timer = setInterval((e) => {
+        console.log(fs.existsSync(`./${name}/done.progress`) + ": " + i++);
+        if (fs.existsSync(`./${name}/done.progress`)) {
+            clearInterval(timer);
+            res.json("Done!");
+            return;
+        };
+    }, 1000);
+});
+
+
+
+app.delete("/delete", (req, res) => {
+    console.log(req.body.file);
+    let fileName = req.body.file;
+    console.log(fs.existsSync(`./${fileName}`));
+    if (fs.existsSync(`./${fileName}`, (err) => {
+            if (err) {
+                throw err;
+                res.json("File not found!");
+            }
+        })) {
+        rimraf.sync(`./${fileName}`, {}, (err) => {
+            if (err) {
+                throw err;
+                res.json("Could not delete file!");
+            }
+        });
+        console.log('File was deleted');
+    }
+    res.json("Done!");
+})
+
 
 function isSplit(name) {
     if (fs.existsSync(`./${name}/done.progress`)) {
@@ -117,8 +163,8 @@ function convertToPNG(e, res, folderName, pageNum, callback) {
                 console.log(err);
             } else {
                 console.log("The file was saved!");
-                if (pageNum === 1)
-                    returnPage(res, folderName, pageNum);
+                // if (pageNum === 1)
+                //     returnPage(res, folderName, pageNum);
                 callback(e, folderName, pageNum, deleteIndividualPDF);
             }
         });
@@ -142,7 +188,6 @@ function convertToText(e, folderName, pageNum, callback) {
 function deleteIndividualPDF(e, path, path2) {
     totalPages++;
     if (totalPages == (e - 1)) {
-        console.log("IT REACHED THIS POINT");
         fs.writeFileSync(path2, "Done!", err => {
             if (err) {
                 console.log(err);
