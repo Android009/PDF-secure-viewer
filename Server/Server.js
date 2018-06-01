@@ -6,6 +6,7 @@ const pdf2Text = require("pdf2text");
 const scissors = require('scissors');
 const bodyParser = require("body-parser");
 const rimraf = require("rimraf");
+const formidable = require("formidable");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ let totalPages;
 app.listen(3000, function() {
     console.log("App listening on port 3000!");
 });
+
 
 app.get("/user", (req, res) => {
     let userList = [];
@@ -91,6 +93,19 @@ app.post("/split", (req, res) => {
     }, 1000);
 });
 
+app.post("/load", (req, res) => {
+    let file = req.body.files;
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        console.log(files.File);
+        var oldpath = files.File.path;
+        var newpath = './pdf/' + files.File.name;
+        fs.rename(oldpath, newpath, function(err) {
+            if (err) throw err;
+            res.json('Done!');
+        });
+    });
+});
 
 
 app.delete("/delete", (req, res) => {
@@ -154,7 +169,6 @@ function convertToPNG(e, res, folderName, pageNum, callback) {
     pdf2png.convert(path, resp => {
         if (!resp.success) {
             console.log("Something went wrong: " + resp.error);
-
             return;
         }
         console.log("Yayy the pdf got converted, now I'm gonna save it!");
@@ -177,7 +191,7 @@ function convertToText(e, folderName, pageNum, callback) {
     let path2 = __dirname + `/${folderName}/done.progress`;
     pdf2Text(path).then(function(pages) {
         fs.writeFile(__dirname + `/${folderName}/page${pageNum}.txt`, pages[0], (err) => {
-            if (err) throw err;
+            if (err) { throw err; }
             console.log('The file has been saved!');
             callback(e, path, path2);
         });

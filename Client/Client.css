@@ -15,6 +15,10 @@ body {
     border: 1px solid black;
 }
 
+.admin-pdf-list-table {
+    border: 1px solid black;
+}
+
 .admin-pdf-list-table th {
     background-color: #771d1d;
     color: white;

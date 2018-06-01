@@ -51,7 +51,7 @@ function loadPDFsAdmin() {
             pdfList.notSplitted.forEach(element => {
                 template += `<tr><td>${element}</td><td><button class="split-pdf">Split</button></td></tr>`;
             });
-            template += "</table>";
+            template += `</table> <input type="file" accept=".pdf" class="new_file"><button class="add_file_btn">Submit</button>`;
             $(".pdf-list").html(template);
             addEventsToAdminButtons();
         }
@@ -108,6 +108,30 @@ function addEventsToAdminButtons() {
             splitRequest.send(JSON.stringify(body));
 
         });
+    });
+
+    $(".add_file_btn").click(() => {
+        let file = $('.new_file').prop('files')[0];
+        loadingDiv.addClass("is-active");
+        let data = new FormData();
+        data.append("File", file);
+        let fileRequest = new XMLHttpRequest();
+        let URL = "http://localhost:3000/load";
+        // let body = { files: file };
+        fileRequest.open('POST', URL, true);
+        fileRequest.onreadystatechange = function() {
+            if (fileRequest.readyState === 4) {
+                if (JSON.parse(fileRequest.response) == "Done!") {
+                    loadingDiv.removeClass("is-active");
+                    loadPDFsAdmin();
+                } else {
+                    alert(JSON.parse(fileRequest.response));
+                    loadingDiv.removeClass("is-active");
+                    loadPDFsAdmin();
+                }
+            }
+        }
+        fileRequest.send(data);
     });
 }
 
