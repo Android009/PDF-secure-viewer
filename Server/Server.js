@@ -109,22 +109,42 @@ app.post("/load", (req, res) => {
 
 
 app.delete("/delete", (req, res) => {
-    console.log(req.body.file);
     let fileName = req.body.file;
-    console.log(fs.existsSync(`./${fileName}`));
-    if (fs.existsSync(`./${fileName}`, (err) => {
-            if (err) {
-                throw err;
-                res.json("File not found!");
+    let type = req.body.type;
+    if (type == "split") {
+        if (fs.existsSync(`./${fileName}`, (err) => {
+                if (err) {
+                    throw err;
+                    res.json("File not found!");
+                }
+            })) {
+            rimraf.sync(`./${fileName}`, {}, (err) => {
+                if (err) {
+                    throw err;
+                    res.json("Could not delete file!");
+                }
+            });
+            console.log('File was deleted');
+        }
+    } else {
+        if (type == "unsplit") {
+
+            if (fs.existsSync(`./pdf/${fileName}.pdf`, (err) => {
+                    console.log("unsplit,exists");
+                    if (err) {
+                        throw err;
+                        res.json("File not found!");
+                    }
+                })) {
+                rimraf.sync(`./pdf/${fileName}.pdf`, {}, (err) => {
+                    console.log("unsplit, exists and enters function");
+                    if (err) {
+                        throw err;
+                        res.json("Could not delete file!");
+                    }
+                });
             }
-        })) {
-        rimraf.sync(`./${fileName}`, {}, (err) => {
-            if (err) {
-                throw err;
-                res.json("Could not delete file!");
-            }
-        });
-        console.log('File was deleted');
+        }
     }
     res.json("Done!");
 })

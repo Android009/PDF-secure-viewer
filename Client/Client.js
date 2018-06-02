@@ -34,7 +34,7 @@ function loadPDFsAdmin() {
     let template = `<table class="admin-pdf-list-table">
                     <tr>
                         <th>File Name</th>
-                        <th>Action</th> 
+                        <th>Actions</th> 
                     </tr>
                     <tr><th colspan="2">Splitted</th></tr>`;
     let listRequest = new XMLHttpRequest();
@@ -43,13 +43,12 @@ function loadPDFsAdmin() {
     listRequest.onreadystatechange = function() {
         if (listRequest.readyState === 4) {
             pdfList = JSON.parse(listRequest.response);
-            console.log(pdfList.splitted);
             pdfList.splitted.forEach(element => {
                 template += `<tr><td>${element}</td><td><button class="delete-pdf">Delete</button></td></tr>`;
             });
             template += `<tr><th colspan="2">Not Splitted</th></tr>`;
             pdfList.notSplitted.forEach(element => {
-                template += `<tr><td>${element}</td><td><button class="split-pdf">Split</button></td></tr>`;
+                template += `<tr><td>${element}</td><td><button class="split-pdf">Split</button><button class="delete_unsplit_pdf">Delete</button></td></tr>`;
             });
             template += `</table> <input type="file" accept=".pdf" class="new_file"><button class="add_file_btn">Submit</button>`;
             $(".pdf-list").html(template);
@@ -65,7 +64,31 @@ function addEventsToAdminButtons() {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
             let URL = `http://localhost:3000/delete`;
-            let body = { file: e.parentElement.parentElement.firstChild.innerHTML };
+            let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "split" };
+            let deleteRequest = new XMLHttpRequest();
+            deleteRequest.open('DELETE', URL, true);
+            deleteRequest.setRequestHeader("Content-Type", "application/json");
+            deleteRequest.onreadystatechange = function() {
+                if (deleteRequest.readyState === 4) {
+                    if (JSON.parse(deleteRequest.response) == "Done!") {
+                        loadingDiv.removeClass('is-active');
+                        loadPDFsAdmin();
+                    } else {
+                        alert(JSON.parse(deleteRequest.response));
+                        loadingDiv.removeClass('is-active');
+                        loadPDFsAdmin();
+                    }
+                }
+            }
+            deleteRequest.send(JSON.stringify(body));
+        });
+    });
+
+    document.querySelectorAll(".delete_unsplit_pdf").forEach((e) => {
+        e.addEventListener("click", () => {
+            loadingDiv.addClass("is-active");
+            let URL = `http://localhost:3000/delete`;
+            let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "unsplit" };
             let deleteRequest = new XMLHttpRequest();
             deleteRequest.open('DELETE', URL, true);
             deleteRequest.setRequestHeader("Content-Type", "application/json");
