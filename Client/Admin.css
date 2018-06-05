@@ -1,0 +1,29 @@
+.admin-list {
+    width: 500px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.admin-pdf-list-table {
+    border: 1px solid black;
+}
+
+.admin-pdf-list-table th {
+    background-color: #771d1d;
+    color: white;
+}
+
+.admin-list table {
+    width: 100%;
+}
+
+.admin-pdf-list-table td,
+{
+    width: 100%;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.admin-pdf-list-table tr:nth-child(even) {
+    background-color: #f2f2f2
+}

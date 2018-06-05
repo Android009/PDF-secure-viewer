@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "../Client")));
-console.log(path.join(__dirname, "../Client"));
 //-------------AUTH---------------------------------------------------------------------------------------------------------------------------------------------
 
 var mongoose = require('mongoose');
@@ -53,8 +52,7 @@ let totalPages;
 
 
 
-
-app.get("/user", (req, res) => {
+app.get("/user-info", (req, res) => {
     let userList = [];
     fs.readdir("./pdf/", (err, files) => {
         files.forEach(e => {
@@ -70,7 +68,7 @@ app.get("/user", (req, res) => {
 })
 
 
-app.get("/admin", (req, res) => {
+app.get("/admin-info", (req, res) => {
     let adminList = { splitted: [], notSplitted: [] };
     fs.readdir("./pdf/", (err, files) => {
         files.forEach(e => {

@@ -6,18 +6,28 @@
     <title>PDF Viewer</title>
     <link rel="stylesheet" href="./Client.css" type="text/css" />
     <link rel="stylesheet" href="./node_modules/pure-css-loader/dist/css-loader.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <script src="jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
-    <div class="loader loader-double"></div>
-    <div class="log-in">
-        <button class="log-in-user">User</button>
-        <button class="log-in-admin">Admin</button>
+    <div class="container">
+
+        <div class="jumbotron text-center">
+            <h1><span class="fa fa-lock"></span> PDF Protected Viewer</h1>
+
+            <p>Enter as:</p>
+
+            <a href="/User" class="btn btn-default"><span class="fa fa-user"></span> User</a>
+            <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Admin</a>
+        </div>
+
     </div>
     <div class="pdf-list">
     </div>
-    <div class="pdf-view"></div>
+    <div class="pdf-view">
+    </div>
 
 
 
