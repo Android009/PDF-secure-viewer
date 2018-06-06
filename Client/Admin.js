@@ -1,3 +1,5 @@
+// var serverAddr = `http://localhost`;
+var serverAddr = "http://86.121.101.225";
 $(document).ready(init());
 
 function init() {
@@ -13,7 +15,7 @@ function loadPDFsAdmin() {
                     </tr>
                     <tr><th colspan="2">Splitted</th></tr>`;
     let listRequest = new XMLHttpRequest();
-    let URL = `http://localhost:3000/admin-info`;
+    let URL = `${serverAddr}:3000/admin-info`;
     listRequest.open('GET', URL, true);
     listRequest.onreadystatechange = function() {
         if (listRequest.readyState === 4) {
@@ -38,7 +40,7 @@ function addEventsToAdminButtons() {
     document.querySelectorAll(".delete-pdf").forEach((e) => {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
-            let URL = `http://localhost:3000/delete`;
+            let URL = `${serverAddr}:3000/delete`;
             let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "split" };
             let deleteRequest = new XMLHttpRequest();
             deleteRequest.open('DELETE', URL, true);
@@ -62,7 +64,7 @@ function addEventsToAdminButtons() {
     document.querySelectorAll(".delete_unsplit_pdf").forEach((e) => {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
-            let URL = `http://localhost:3000/delete`;
+            let URL = `${serverAddr}:3000/delete`;
             let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "unsplit" };
             let deleteRequest = new XMLHttpRequest();
             deleteRequest.open('DELETE', URL, true);
@@ -86,7 +88,7 @@ function addEventsToAdminButtons() {
     document.querySelectorAll(".split-pdf").forEach((e) => {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
-            let URL = `http://localhost:3000/split`;
+            let URL = `${serverAddr}:3000/split`;
             let body = { file: e.parentElement.parentElement.firstChild.innerHTML };
             let splitRequest = new XMLHttpRequest();
             splitRequest.open('POST', URL, true);
@@ -114,7 +116,7 @@ function addEventsToAdminButtons() {
         let data = new FormData();
         data.append("File", file);
         let fileRequest = new XMLHttpRequest();
-        let URL = "http://localhost:3000/load";
+        let URL = `${serverAddr}:3000/load`;
         // let body = { files: file };
         fileRequest.open('POST', URL, true);
         fileRequest.onreadystatechange = function() {

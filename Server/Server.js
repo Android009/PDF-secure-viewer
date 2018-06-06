@@ -121,14 +121,13 @@ app.post("/split", (req, res) => {
             res.json("Done!");
             return;
         };
-    }, 1000);
+    }, 5000);
 });
 
 app.post("/load", (req, res) => {
     let file = req.body.files;
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
-        console.log(files.File);
         var oldpath = files.File.path;
         var newpath = './pdf/' + files.File.name;
         fs.rename(oldpath, newpath, function(err) {
@@ -240,8 +239,12 @@ function convertToPNG(e, res, folderName, pageNum, callback) {
 function convertToText(e, folderName, pageNum, callback) {
     let path = __dirname + `/${folderName}/out${pageNum}.pdf`;
     let path2 = __dirname + `/${folderName}/done.progress`;
-    pdf2Text(path).then(function(pages) {
-        fs.writeFile(__dirname + `/${folderName}/page${pageNum}.txt`, pages[0], (err) => {
+    pdf2Text(path).then((pages) => {
+        let string = "";
+        pages[0].forEach(e => {
+            string += e.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") + " ";
+        });
+        fs.writeFile(__dirname + `/${folderName}/${pageNum}.txt`, string, (err) => {
             if (err) { throw err; }
             console.log('The file has been saved!');
             callback(e, path, path2);

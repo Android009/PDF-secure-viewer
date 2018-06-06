@@ -1,6 +1,17 @@
+.container {
+    margin-top: 1%;
+    width: 90%;
+    border: 1px solid black;
+    padding: 0px;
+}
+
 .pdf-link {
     color: blue;
-    text-align: center;
+    width: auto;
+    text-align: left;
+    display: inline-block;
+    word-break: break-all;
+    white-space: normal;
 }
 
 .pdf-link:hover {
@@ -10,4 +21,65 @@
 
 .left-page {
     border: 1px solid black;
+    width: 100%;
+}
+
+.pdf-list-container {
+    width: 19%;
+    display: inline-block;
+    height: 100%;
+    float: left;
+}
+
+.pdf-list {
+    overflow-wrap: normal;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 5%;
+}
+
+.fileList {
+    border: 1px solid black;
+    min-height: 100%;
+}
+
+.pdf-view {
+    width: 79%;
+    display: table-cell;
+    float: right;
+}
+
+.searchContainer {
+    margin: 5% 0 5% 0;
+    text-align: center;
+}
+
+.searchText {
+    width: 55%;
+}
+
+.searchBtn {
+    width: 39%;
+}
+
+.navBar {
+    border: 1px solid black;
+    padding: 1%;
+}
+
+.searchBar {
+    padding: 1%;
+    float: right;
+    width: 29%;
+}
+
+.fileNavContainer {
+    text-align: center;
+}
+
+.searchButtonsContainer {
+    padding: 1%;
+    width: 69%;
+    text-align: right;
+    display: inline-block;
 }

@@ -8,6 +8,7 @@ const rimraf = require("rimraf");
 const bodyParser = require("body-parser");
 const formidable = require("formidable");
 const path = require("path");
+const findInFiles = require('find-in-files');
 class Routes {
     constructor(expressApp, passport) {
         this.app = expressApp;
@@ -36,7 +37,23 @@ class Routes {
             res.sendFile(path.join(__dirname, "../../Client/admin.html"));
         });
 
+        this.app.post('/search', (req, res) => {
+            let searchWord = req.query.text;
+            let filePath = req.body.name;
+            let r = [];
+            findInFiles.find(`${searchWord}`, path.join(__dirname, `../${filePath}`), '.txt$')
+                .then((results) => {
+                    for (let result in results) {
+                        let res = results[result];
+                        let punct = result.indexOf(".");
+                        let start = (path.join(__dirname, `../${filePath}/`)).length;
+                        r.push({ pageNum: result.substring(start, punct), found: res.count });
 
+                    }
+                    r.reverse();
+                    res.json(r);
+                });
+        });
 
         // =====================================
         // LOGIN ===============================
