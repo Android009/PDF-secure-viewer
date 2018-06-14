@@ -1,5 +1,5 @@
-// var serverAddr = `http://localhost`;
-var serverAddr = "http://86.121.101.225";
+var serverAddr = `http://localhost`;
+// var serverAddr = "http://86.121.101.225";
 $(document).ready(init());
 
 function init() {
@@ -41,7 +41,7 @@ function addEventsToAdminButtons() {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
             let URL = `${serverAddr}:3000/delete`;
-            let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "split" };
+            let body = { v: encode({ file: e.parentElement.parentElement.firstChild.innerHTML, type: "split" }) };
             let deleteRequest = new XMLHttpRequest();
             deleteRequest.open('DELETE', URL, true);
             deleteRequest.setRequestHeader("Content-Type", "application/json");
@@ -65,7 +65,7 @@ function addEventsToAdminButtons() {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
             let URL = `${serverAddr}:3000/delete`;
-            let body = { file: e.parentElement.parentElement.firstChild.innerHTML, type: "unsplit" };
+            let body = { v: encode({ file: e.parentElement.parentElement.firstChild.innerHTML, type: "unsplit" }) };
             let deleteRequest = new XMLHttpRequest();
             deleteRequest.open('DELETE', URL, true);
             deleteRequest.setRequestHeader("Content-Type", "application/json");
@@ -89,7 +89,7 @@ function addEventsToAdminButtons() {
         e.addEventListener("click", () => {
             loadingDiv.addClass("is-active");
             let URL = `${serverAddr}:3000/split`;
-            let body = { file: e.parentElement.parentElement.firstChild.innerHTML };
+            let body = { v: encode({ file: e.parentElement.parentElement.firstChild.innerHTML }) };
             let splitRequest = new XMLHttpRequest();
             splitRequest.open('POST', URL, true);
             splitRequest.setRequestHeader("Content-Type", "application/json");
@@ -117,7 +117,6 @@ function addEventsToAdminButtons() {
         data.append("File", file);
         let fileRequest = new XMLHttpRequest();
         let URL = `${serverAddr}:3000/load`;
-        // let body = { files: file };
         fileRequest.open('POST', URL, true);
         fileRequest.onreadystatechange = function() {
             if (fileRequest.readyState === 4) {
@@ -133,4 +132,11 @@ function addEventsToAdminButtons() {
         }
         fileRequest.send(data);
     });
+}
+
+function encode(obj) {
+    let password = 9;
+    let data = JSON.stringify(obj);
+    var encryptedMessage = sjcl.encrypt(password.toString(), data);
+    return btoa(encryptedMessage);
 }

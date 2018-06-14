@@ -70,7 +70,7 @@
 .searchBar {
     padding: 1%;
     float: right;
-    width: 29%;
+    width: 39%;
 }
 
 .fileNavContainer {
@@ -79,7 +79,11 @@
 
 .searchButtonsContainer {
     padding: 1%;
-    width: 69%;
+    width: 59%;
     text-align: right;
     display: inline-block;
+}
+
+.foundNo {
+    float: left;
 }

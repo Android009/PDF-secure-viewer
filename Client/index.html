@@ -4,11 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <title>PDF Viewer</title>
-    <link rel="stylesheet" href="./Client.css" type="text/css" />
+    <link rel="stylesheet" href="./assets/css/Client.css" type="text/css" />
     <link rel="stylesheet" href="./node_modules/pure-css-loader/dist/css-loader.css">
-    <link rel="stylesheet" href="./bootstrap.min.css">
-    <link rel="stylesheet" href="./fontawesome-all.min.css">
-    <script src="jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/fontawesome-all.min.css">
+    <script src="./assets/js/jquery-3.3.1.min.js"></script>
+
 </head>
 
 <body>
@@ -21,6 +22,7 @@
 
             <a href="/User" class="btn btn-default"><span class="fa fa-user"></span> User</a>
             <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Admin</a>
+            <a class="btn btn-default gen"><span class="fa fa-user"></span> Gen Key</a>
         </div>
 
     </div>
@@ -28,11 +30,9 @@
     </div>
     <div class="pdf-view">
     </div>
+    <script type="text/javascript" src="./assets/js/Client.js"></script>
+    <script type="text/javascript" src="./assets/js/sjcl.js"></script>
 
-
-
-
-    <script type="text/javascript" src="./Client.js"></script>
 </body>
 
 </html>

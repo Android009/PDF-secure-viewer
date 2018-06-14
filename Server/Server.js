@@ -8,6 +8,8 @@ const rimraf = require("rimraf");
 const bodyParser = require("body-parser");
 const formidable = require("formidable");
 const path = require("path");
+const atob = require("atob");
+const sjcl = require("sjcl");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -68,7 +70,7 @@ app.get("/user-info", (req, res) => {
 })
 
 
-app.get("/admin-info", (req, res) => {
+app.get("/admin-info", isLoggedIn, (req, res) => {
     let adminList = { splitted: [], notSplitted: [] };
     fs.readdir("./pdf/", (err, files) => {
         files.forEach(e => {
@@ -85,31 +87,17 @@ app.get("/admin-info", (req, res) => {
 })
 
 app.get("/selection", (req, res) => {
-    let name = req.query.name;
-    let num = req.query.num;
-    let isSsplit = false;
-    fs.readdir("./", (err, files) => {
-        for (let x = 0; x < files.length; x++) {
-            if (files[x] == name)
-                isSsplit = true;
-        }
-        if (isSsplit)
-            returnPage(res, name, num);
-        else {
-
-            var pdf = scissors(`./pdf/${name}.pdf`);
-            pdf.getNumPages().then(e => {
-                split(res, e, name, pdf);
-            });
-        }
-
-    });
-
+    // console.log(atob(req.query.v));
+    let params = decode(req.query.v);
+    let name = params.name;
+    let num = params.num;
+    returnPage(res, name, num);
 })
 
 app.post("/split", (req, res) => {
     let i = 1;
-    let name = req.body.file;
+    let params = decode(req.body.v);
+    let name = params.file;
     var pdf = scissors(`./pdf/${name}.pdf`);
     pdf.getNumPages().then(e => {
         split(res, e, name, pdf);
@@ -139,8 +127,9 @@ app.post("/load", (req, res) => {
 
 
 app.delete("/delete", (req, res) => {
-    let fileName = req.body.file;
-    let type = req.body.type;
+    let params = decode(req.body.v);
+    let fileName = params.file;
+    let type = params.type;
     if (type == "split") {
         if (fs.existsSync(`./${fileName}`, (err) => {
                 if (err) {
@@ -266,6 +255,22 @@ function deleteIndividualPDF(e, path, path2) {
         if (err) throw err;
         console.log('File was deleted');
     });
+}
+
+function decode(string) {
+    let password = 9;
+    let decryptedMessage = sjcl.decrypt(password.toString(), atob(string));
+    return JSON.parse(decryptedMessage);
+}
+
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    res.redirect('/');
 }
 
 app.listen(3000, function() {

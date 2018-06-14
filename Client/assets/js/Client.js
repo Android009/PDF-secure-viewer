@@ -19,6 +19,32 @@ $(document).ready(init());
 // }
 
 function init() {
+
+    $(".gen").click(() => {
+
+        let password = 8154265897526598562645181565329183482618286526416428326655;
+        let data = "GhidStudent_2016:)";
+        var encryptedMessage = sjcl.encrypt(password.toString(), data, { mode: "ccm", iter: 1000, ks: 128, ts: 64, v: 1, cipher: "aes", adata: "", salt: "myGeneratedSalt" });
+        var parsedMessage = JSON.parse(encryptedMessage);
+        delete parsedMessage.mode;
+        delete parsedMessage.iter;
+        delete parsedMessage.ks;
+        delete parsedMessage.ts;
+        delete parsedMessage.v;
+        delete parsedMessage.cipher;
+        delete parsedMessage.salt;
+        delete parsedMessage.adata;
+        encryptedMessageWithoutParameters = JSON.stringify(parsedMessage);
+        console.log(encryptedMessageWithoutParameters);
+
+
+        var parsedMessage2 = JSON.parse(encryptedMessageWithoutParameters);
+        // jQuery.extend(parsedMessage2);
+        messageWithParameters = JSON.stringify(parsedMessage2);
+        var decryptedMessage = sjcl.decrypt(password.toString(), messageWithParameters);
+        console.log(decryptedMessage);
+
+    });
     // $(".log-in-user").click(() => {
     //     loadPDFsUser();
     //     $(`.pdf-list`).addClass("user-list");

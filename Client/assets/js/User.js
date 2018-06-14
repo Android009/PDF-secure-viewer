@@ -1,5 +1,5 @@
-// var serverAddr = `http://localhost`;
-var serverAddr = "http://86.121.101.225";
+var serverAddr = `http://localhost`;
+// var serverAddr = "http://86.121.101.225";
 $(document).change(init());
 
 
@@ -10,8 +10,9 @@ function init() {
 
 function loadPDFsUser() {
 
+    sessionStorage.setItem('Searching', "False");
     let pdfList;
-    let template = '<div class="fileList"><div class="searchContainer"><input type="text" class="searchText"><button class="searchBtn">Search</button></div><div class="pdf-list">';
+    let template = '<div class="fileList"><div class="searchContainer"><input type="text" class="searchText"></div><div class="pdf-list">';
     let listRequest = new XMLHttpRequest();
     let URL = `${serverAddr}:3000/user-info`;
     listRequest.open('GET', URL, true);
@@ -24,6 +25,17 @@ function loadPDFsUser() {
             template += '</div></div>';
             $(".pdf-list-container").html(template);
             addEventsToTitles();
+            $(".searchText").on("change paste keyup input", () => {
+                document.querySelectorAll(".pdf-link").forEach((e) => {
+                    if ($(".searchText").val() == "") {
+                        e.style.display = "inline-block";
+                    } else if ($(".searchText").val() != undefined && $(".searchText").val() != null) {
+                        if (e.innerHTML.indexOf($(".searchText").val()) == -1) {
+                            e.style.display = "none";
+                        }
+                    }
+                });
+            });
         }
     }
     listRequest.send();
@@ -69,7 +81,7 @@ function addEventsToPageButtons() {
 
 function addEventsToSearch() {
     let fileName = sessionStorage.getItem('pdfName');
-    let body = { name: fileName };
+    let body = { v: encode({ name: fileName }) };
     let number = "";
     $(".fileSearchBtn").click(() => {
         if ($(".fileSearch").val() != undefined && $(".fileSearch").val() != null && $(".fileSearch").val() != "") {
@@ -87,7 +99,8 @@ function addEventsToSearch() {
                     let a = JSON.parse(sessionStorage.getItem('Found'))[0];
                     if (a != undefined)
                         drawGUI(fileName, a.pageNum, true);
-                    //addEventsToSearchButtons();
+                    else
+                        alert("No match found.");
                 }
             }
             searchRequest.send(JSON.stringify(body));
@@ -96,7 +109,7 @@ function addEventsToSearch() {
 }
 
 function drawSearchButtons() {
-    let template = `<button class="searchLeft"><span class="fas fa-angle-double-left"></span></button><button class="searchRight"><span class="fas fa-angle-double-right"></span></button><button class="closeSearch"><span class="fas fa-times"></span></button>`;
+    let template = `<p class="foundNo">${parseInt(sessionStorage.getItem('FoundIndex'))+1}/${parseInt(sessionStorage.getItem('SearchResultNo'))}</p><button class="searchLeft"><span class="fas fa-angle-double-left"></span></button><button class="searchRight"><span class="fas fa-angle-double-right"></span></button><button class="closeSearch"><span class="fas fa-times"></span></button>`;
     $('.searchButtonsContainer').html(template);
     addEventsToSearchButtons();
 }
@@ -107,7 +120,7 @@ function addEventsToSearchButtons() {
     let fileName = sessionStorage.getItem('pdfName');
     let a = JSON.parse(sessionStorage.getItem('Found'));
     $(".searchLeft").click(() => {
-        if (index > 0 && index < max - 1) {
+        if (index > 0 && index <= max - 1) {
             drawGUI(fileName, a[index - 1].pageNum, true);
             sessionStorage.setItem('FoundIndex', index - 1);
         }
@@ -130,7 +143,7 @@ function drawGUI(name, num, drawButtons) {
     console.log(name);
     let maxPage = new XMLHttpRequest();
     let URL = `${serverAddr}:3000/max`;
-    let body = { pdfName: name };
+    let body = { v: encode({ pdfName: name }) };
     maxPage.open('POST', URL, true);
     maxPage.setRequestHeader("Content-Type", "application/json");
     maxPage.onreadystatechange = function() {
@@ -145,7 +158,8 @@ function drawGUI(name, num, drawButtons) {
             <button class="next-button">Next</button></div>
          `;
             document.querySelector(".pdf-view").innerHTML = html;
-            let imageURL = `${serverAddr}:3000/selection?name=${name}&num=${num}`;
+            let params = { name: name, num: num };
+            let imageURL = `${serverAddr}:3000/selection?v=${encode(params)}`;
             document.querySelector(".left-page").src = imageURL;
             sessionStorage.setItem('pageNum', num);
             sessionStorage.setItem('pdfName', name);
@@ -160,3 +174,10 @@ function drawGUI(name, num, drawButtons) {
     maxPage.send(JSON.stringify(body));
 
 };
+
+function encode(obj) {
+    let password = 9;
+    let data = JSON.stringify(obj);
+    var encryptedMessage = sjcl.encrypt(password.toString(), data);
+    return btoa(encryptedMessage);
+}

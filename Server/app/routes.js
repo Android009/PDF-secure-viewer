@@ -9,6 +9,8 @@ const bodyParser = require("body-parser");
 const formidable = require("formidable");
 const path = require("path");
 const findInFiles = require('find-in-files');
+const atob = require("atob");
+const sjcl = require("sjcl");
 class Routes {
     constructor(expressApp, passport) {
         this.app = expressApp;
@@ -39,7 +41,8 @@ class Routes {
 
         this.app.post('/search', (req, res) => {
             let searchWord = req.query.text;
-            let filePath = req.body.name;
+            let params = decode(req.body.v);
+            let filePath = params.name;
             let r = [];
             findInFiles.find(`${searchWord}`, path.join(__dirname, `../${filePath}`), '.txt$')
                 .then((results) => {
@@ -50,10 +53,15 @@ class Routes {
                         r.push({ pageNum: result.substring(start, punct), found: res.count });
 
                     }
-                    r.reverse();
+                    // r.reverse();
+                    r.sort(compareNumbers);
                     res.json(r);
                 });
         });
+
+        function compareNumbers(a, b) {
+            return parseInt(a.pageNum) - parseInt(b.pageNum);
+        }
 
         // =====================================
         // LOGIN ===============================
@@ -115,13 +123,19 @@ class Routes {
         }));
 
         this.app.post("/max", (req, res) => {
-            let name = req.body.pdfName;
+            let params = decode(req.body.v);
+            let name = params.pdfName;
             var pdf = scissors(path.join(__dirname, `../pdf/${name}.pdf`));
             pdf.getNumPages().then(e => {
                 res.json(e);
             });
         });
 
+        function decode(string) {
+            let password = 9;
+            let decryptedMessage = sjcl.decrypt(password.toString(), atob(string));
+            return JSON.parse(decryptedMessage);
+        }
         // route middleware to make sure a user is logged in
         function isLoggedIn(req, res, next) {
 
