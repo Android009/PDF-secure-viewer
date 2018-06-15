@@ -140,7 +140,6 @@ function addEventsToSearchButtons() {
 
 function drawGUI(name, num, drawButtons) {
 
-    console.log(name);
     let maxPage = new XMLHttpRequest();
     let URL = `${serverAddr}:3000/max`;
     let body = { v: encode({ pdfName: name }) };
@@ -179,5 +178,32 @@ function encode(obj) {
     let password = 9;
     let data = JSON.stringify(obj);
     var encryptedMessage = sjcl.encrypt(password.toString(), data);
-    return btoa(encryptedMessage);
+    console.log(scramble(btoa(encryptedMessage)));
+    return scramble(btoa(encryptedMessage));
+}
+
+
+function scramble(string) {
+    let sum = 0;
+    let sir = "";
+    for (let i = 0; i < string.length; i++) {
+        if (string[i] >= 0 && string[i] <= 9)
+            sum += Number(string[i]);
+
+    }
+    let zi = new Date();
+    let seg = sum % 13 + 1;
+    console.log(seg);
+    let contor1 = 0;
+    let contor2 = seg;
+    let subsir;
+    for (let x = 0; x < Math.ceil(string.length / seg); x++) {
+        subsir = string.substring(contor1, contor2 + 1);
+        sir += subsir.split("").reverse().join("");
+        contor1 = contor2 + 1;
+        contor2 += seg;
+        if (contor2 > string.length)
+            contor2 = string.length;
+    }
+    return sir;
 }

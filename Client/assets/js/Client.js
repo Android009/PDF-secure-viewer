@@ -22,29 +22,81 @@ function init() {
 
     $(".gen").click(() => {
 
-        let password = 8154265897526598562645181565329183482618286526416428326655;
-        let data = "GhidStudent_2016:)";
-        var encryptedMessage = sjcl.encrypt(password.toString(), data, { mode: "ccm", iter: 1000, ks: 128, ts: 64, v: 1, cipher: "aes", adata: "", salt: "myGeneratedSalt" });
-        var parsedMessage = JSON.parse(encryptedMessage);
-        delete parsedMessage.mode;
-        delete parsedMessage.iter;
-        delete parsedMessage.ks;
-        delete parsedMessage.ts;
-        delete parsedMessage.v;
-        delete parsedMessage.cipher;
-        delete parsedMessage.salt;
-        delete parsedMessage.adata;
-        encryptedMessageWithoutParameters = JSON.stringify(parsedMessage);
-        console.log(encryptedMessageWithoutParameters);
+        let string = "eyJpdiI6IjlZTmlMRkdPNUcrRHBtMzhnUktjR1E9PSIsInYiOjEsIml0ZXIiOjEwMDAwLCJrcyI6MTI4LCJ0cyI6NjQsIm1vZGUiOiJjY20iLCJhZGF0YSI6IiIsImNpcGhlciI6ImFlcyIsInNhbHQiOiIvT3locWN3QitFND0iLCJjdCI6IkN4cXdtK0FrNlRjRldMdjA3cDJXM0JzRzc4QUtUUHhzdkFHNTkrTU5LZVBZOE1QNmlKREJxZDhmR3c9PSJ9";
+        console.log(string);
+        console.log(descramble(scramble(string)));
+        console.log(string.localeCompare(descramble(scramble(string))));
+        // let password = 8154265897526598562645181565329183482618286526416428326655;
+        // let data = "GhidStudent_2016:)";
+        // var encryptedMessage = sjcl.encrypt(password.toString(), data, { mode: "ccm", iter: 1000, ks: 128, ts: 64, v: 1, cipher: "aes", adata: "", salt: "myGeneratedSalt" });
+        // var parsedMessage = JSON.parse(encryptedMessage);
+        // delete parsedMessage.mode;
+        // delete parsedMessage.iter;
+        // delete parsedMessage.ks;
+        // delete parsedMessage.ts;
+        // delete parsedMessage.v;
+        // delete parsedMessage.cipher;
+        // delete parsedMessage.salt;
+        // delete parsedMessage.adata;
+        // encryptedMessageWithoutParameters = JSON.stringify(parsedMessage);
+        // console.log(encryptedMessageWithoutParameters);
 
 
-        var parsedMessage2 = JSON.parse(encryptedMessageWithoutParameters);
-        // jQuery.extend(parsedMessage2);
-        messageWithParameters = JSON.stringify(parsedMessage2);
-        var decryptedMessage = sjcl.decrypt(password.toString(), messageWithParameters);
-        console.log(decryptedMessage);
+        // var parsedMessage2 = JSON.parse(encryptedMessageWithoutParameters);
+        // // jQuery.extend(parsedMessage2);
+        // messageWithParameters = JSON.stringify(parsedMessage2);
+        // var decryptedMessage = sjcl.decrypt(password.toString(), messageWithParameters);
+        // console.log(decryptedMessage);
 
     });
+
+    function scramble(string) {
+        let sum = 0;
+        let sir = "";
+        for (let i = 0; i < string.length; i++) {
+            if (string[i] >= 0 && string[i] <= 9)
+                sum += Number(string[i]);
+
+        }
+        let zi = new Date();
+        let seg = sum % 13 + 1;
+        let contor1 = 0;
+        let contor2 = seg;
+        let subsir;
+        for (let x = 0; x < Math.ceil(string.length / seg); x++) {
+            subsir = string.substring(contor1, contor2 + 1);
+            sir += subsir.split("").reverse().join("");
+            contor1 = contor2 + 1;
+            contor2 += seg;
+            if (contor2 > string.length)
+                contor2 = string.length;
+        }
+        return sir;
+    }
+
+    function descramble(string) {
+        let sum = 0;
+        let sir = "";
+        for (let i = 0; i < string.length; i++) {
+            if (string[i] >= 0 && string[i] <= 9)
+                sum += Number(string[i]);
+
+        }
+        let zi = new Date();
+        let seg = sum % 13 + 1;
+        let contor1 = 0;
+        let contor2 = seg;
+        let subsir;
+        for (let x = 0; x < Math.ceil(string.length / seg); x++) {
+            subsir = string.substring(contor1, contor2 + 1);
+            sir += subsir.split("").reverse().join("");
+            contor1 = contor2 + 1;
+            contor2 += seg;
+            if (contor2 > string.length)
+                contor2 = string.length;
+        }
+        return sir;
+    }
     // $(".log-in-user").click(() => {
     //     loadPDFsUser();
     //     $(`.pdf-list`).addClass("user-list");
