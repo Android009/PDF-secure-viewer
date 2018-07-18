@@ -1,15 +1,20 @@
 .container {
     margin-top: 1%;
     width: 90%;
-    border: 1px solid black;
+    height: 85vh;
+    /* border: 1px solid black; */
     padding: 0px;
+}
+
+p {
+    display: block;
 }
 
 .pdf-link {
     color: blue;
     width: auto;
     text-align: left;
-    display: inline-block;
+    /* display: inline-block; */
     word-break: break-all;
     white-space: normal;
 }
@@ -19,39 +24,60 @@
     cursor: pointer;
 }
 
+.image-container {
+    text-align: center;
+    height: 88%;
+}
+
 .left-page {
-    border: 1px solid black;
-    width: 100%;
+    /* border: 1px solid black; */
+    max-width: 82%;
+    max-height: 99%;
+    display: inline-block;
 }
 
 .pdf-list-container {
+    /* width: 19%;
+    display: inline-block;
+    height: 100%;
+    float: left; */
+}
+
+.pdf-list {
+    border-top: 1px solid;
+    overflow-wrap: normal;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 5%;
+    min-height: 80vh;
+}
+
+.fileList {
+    border: 1px solid black;
+    min-height: 100%;
     width: 19%;
     display: inline-block;
     height: 100%;
     float: left;
 }
 
-.pdf-list {
-    overflow-wrap: normal;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding: 5%;
-}
-
-.fileList {
-    border: 1px solid black;
-    min-height: 100%;
-}
-
 .pdf-view {
     width: 79%;
+    height: 100%;
     display: table-cell;
     float: right;
+    background-color: lightgrey;
+    padding: 0% 1% 0% 1%;
+    ;
 }
 
 .searchContainer {
     margin: 5% 0 5% 0;
     text-align: center;
+}
+
+.fileSearchContainer {
+    height: 6%;
 }
 
 .searchText {
@@ -65,16 +91,19 @@
 .navBar {
     border: 1px solid black;
     padding: 1%;
+    margin-bottom: 2%;
 }
 
 .searchBar {
     padding: 1%;
     float: right;
+    text-align: right;
     width: 39%;
 }
 
 .fileNavContainer {
     text-align: center;
+    padding: 1%;
 }
 
 .searchButtonsContainer {
@@ -85,5 +114,7 @@
 }
 
 .foundNo {
-    float: left;
+    /* float: left; */
+    display: inline;
+    margin-right: 2%;
 }

@@ -11,9 +11,9 @@ function loadPDFsAdmin() {
     let template = `<table class="admin-pdf-list-table">
                     <tr>
                         <th>File Name</th>
-                        <th>Actions</th> 
+                        <th class="action_col">Actions</th> 
                     </tr>
-                    <tr><th colspan="2">Splitted</th></tr>`;
+                    <tr><th colspan="2">Split</th></tr>`;
     let listRequest = new XMLHttpRequest();
     let URL = `${serverAddr}:3000/admin-info`;
     listRequest.open('GET', URL, true);
@@ -21,13 +21,13 @@ function loadPDFsAdmin() {
         if (listRequest.readyState === 4) {
             pdfList = JSON.parse(listRequest.response);
             pdfList.splitted.forEach(element => {
-                template += `<tr><td>${element}</td><td><button class="delete-pdf">Delete</button></td></tr>`;
+                template += `<tr><td>${element}</td><td class="action_col"><button class="delete-pdf btn btn-danger">Delete</button></td></tr>`;
             });
-            template += `<tr><th colspan="2">Not Splitted</th></tr>`;
+            template += `<tr><th colspan="2">Not Split</th></tr>`;
             pdfList.notSplitted.forEach(element => {
-                template += `<tr><td>${element}</td><td><button class="split-pdf">Split</button><button class="delete_unsplit_pdf">Delete</button></td></tr>`;
+                template += `<tr><td>${element}</td><td class="action_col"><button class="split-pdf btn btn-success">Split</button><button class="delete_unsplit_pdf btn btn-danger">Delete</button></td></tr>`;
             });
-            template += `</table> <input type="file" accept=".pdf" class="new_file"><button class="add_file_btn">Submit</button>`;
+            template += `</table> <table class="admin-pdf-list-table"><tr><th>Other actions</th><th class="action_col">Action</th></tr><tr><td><p>Add new files </p><input type="file" accept=".pdf" class="new_file"></td><td class="action_col"><button class="add_file_btn btn btn-info">Submit</button></td></tr><tr><td>Manage admin accounts</td><td class="action_col"><form><button class="btn btn-info" formaction="/signup">New Account</button></form></td></tr><tr><td>View profile</td><td class="action_col"><form><button class="btn btn-info" formaction="/profile">View</button></form></td></tr></tr><tr><td>Log out of admin account</td><td class="action_col"><form><button class="btn btn-info" formaction="/logout">Log out</button></form></td></tr></table>`;
             $(".pdf-list").html(template);
             addEventsToAdminButtons();
         }
@@ -135,7 +135,7 @@ function addEventsToAdminButtons() {
 }
 
 function encode(obj) {
-    let password = 9;
+    let password = "UTCN2018_Cluj_2154142389751152";
     let data = JSON.stringify(obj);
     var encryptedMessage = sjcl.encrypt(password.toString(), data);
     return scramble(btoa(encryptedMessage));
@@ -151,7 +151,7 @@ function scramble(string) {
 
     }
     let zi = new Date();
-    let seg = sum % 13 + 1;
+    let seg = sum % 13 + zi.getHours();
     let contor1 = 0;
     let contor2 = seg;
     let subsir;

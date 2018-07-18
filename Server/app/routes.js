@@ -22,10 +22,6 @@ class Routes {
 
     initialize() {
 
-        // =====================================
-        // HOME PAGE (with login links) ========
-        // =====================================
-
         this.app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, "../../Client/index.html"));
         });
@@ -53,7 +49,6 @@ class Routes {
                         r.push({ pageNum: result.substring(start, punct), found: res.count });
 
                     }
-                    // r.reverse();
                     r.sort(compareNumbers);
                     res.json(r);
                 });
@@ -115,6 +110,7 @@ class Routes {
             failureFlash: true // allow flash messages
         }));
 
+
         // process the login form
         this.app.post('/login', this.passport.authenticate('local-login', {
             successRedirect: '/Admin', // redirect to the secure profile section
@@ -132,7 +128,7 @@ class Routes {
         });
 
         function decode(string) {
-            let password = 9;
+            let password = "UTCN2018_Cluj_2154142389751152";
             let decryptedMessage = sjcl.decrypt(password.toString(), atob(descramble(string)));
             return JSON.parse(decryptedMessage);
         }
@@ -146,7 +142,7 @@ class Routes {
 
             }
             let zi = new Date();
-            let seg = sum % 13 + 1;
+            let seg = sum % 13 + zi.getHours();
             let contor1 = 0;
             let contor2 = seg;
             let subsir;
@@ -160,15 +156,13 @@ class Routes {
             }
             return sir;
         }
-        // route middleware to make sure a user is logged in
-        function isLoggedIn(req, res, next) {
 
+        function isLoggedIn(req, res, next) {
             // if user is authenticated in the session, carry on 
             if (req.isAuthenticated())
                 return next();
-
             // if they aren't redirect them to the home page
-            res.redirect('/');
+            res.redirect('/login');
         }
     }
 

@@ -1,3 +1,7 @@
+body {
+    padding-top: 40px;
+}
+
 .admin-list {
     width: 500px;
     text-align: center;
@@ -17,6 +21,16 @@
     width: 100%;
 }
 
+.navBar {
+    border: 1px solid black;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+.admin-pdf-list-table {
+    border-radius: 5%;
+}
+
 .admin-pdf-list-table td,
 {
     width: 100%;
@@ -26,4 +40,27 @@
 
 .admin-pdf-list-table tr:nth-child(even) {
     background-color: #f2f2f2
+}
+
+table {
+    width: 100%;
+    margin: 2% 0%;
+}
+
+th {
+    padding: 1% 4% 1% 4%;
+    border: 1px solid black;
+}
+
+td {
+    padding: 1%;
+}
+
+.action_col {
+    width: 20%;
+    text-align: center;
+}
+
+.action_col * {
+    margin: 1%;
 }

@@ -10,6 +10,13 @@ const formidable = require("formidable");
 const path = require("path");
 const atob = require("atob");
 const sjcl = require("sjcl");
+const mongoose = require('mongoose');
+const passport = require('passport');
+const flash = require('connect-flash');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const configDB = require('./config/database.js');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -18,13 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../Client")));
 //-------------AUTH---------------------------------------------------------------------------------------------------------------------------------------------
 
-var mongoose = require('mongoose');
-var passport = require('passport');
-var flash = require('connect-flash');
-var morgan = require('morgan');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var configDB = require('./config/database.js');
+
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
@@ -37,7 +38,7 @@ app.use(cookieParser()); // read cookies (needed for auth)
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+app.use(session({ resave: true, saveUninitialized: true, secret: 'UTCN-Sir de caractere secret' })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
@@ -87,7 +88,6 @@ app.get("/admin-info", isLoggedIn, (req, res) => {
 })
 
 app.get("/selection", (req, res) => {
-    // console.log(atob(req.query.v));
     let params = decode(req.query.v);
     let name = params.name;
     let num = params.num;
@@ -116,12 +116,19 @@ app.post("/load", (req, res) => {
     let file = req.body.files;
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
-        var oldpath = files.File.path;
-        var newpath = './pdf/' + files.File.name;
-        fs.rename(oldpath, newpath, function(err) {
-            if (err) throw err;
-            res.json('Done!');
-        });
+        if (files.File != null && files.File != undefined) {
+            var oldpath = files.File.path;
+            var newpath = './pdf/' + files.File.name;
+            fs.rename(oldpath, newpath, function(err) {
+                if (err) {
+                    throw err;
+                    res.json(err);
+                } else
+                    res.json('Done!');
+            });
+        } else {
+            res.json('File could not be saved!');
+        }
     });
 });
 
@@ -143,20 +150,17 @@ app.delete("/delete", (req, res) => {
                     res.json("Could not delete file!");
                 }
             });
-            console.log('File was deleted');
         }
     } else {
         if (type == "unsplit") {
 
             if (fs.existsSync(`./pdf/${fileName}.pdf`, (err) => {
-                    console.log("unsplit,exists");
                     if (err) {
                         throw err;
                         res.json("File not found!");
                     }
                 })) {
                 rimraf.sync(`./pdf/${fileName}.pdf`, {}, (err) => {
-                    console.log("unsplit, exists and enters function");
                     if (err) {
                         throw err;
                         res.json("Could not delete file!");
@@ -180,7 +184,7 @@ function isSplit(name) {
 function split(res, e, name, pdf) {
     totalPages = 1;
     fs.mkdirSync(`${name}`);
-    for (let i = 1; i < e; i++) {
+    for (let i = 1; i <= e; i++) {
 
         let pdfPage = pdf.pages(i);
         pdfPage.pdfStream().pipe(fs.createWriteStream(`${name}/out${i}.pdf`)).on('finish', function() {
@@ -210,14 +214,11 @@ function convertToPNG(e, res, folderName, pageNum, callback) {
             console.log("Something went wrong: " + resp.error);
             return;
         }
-        console.log("Yayy the pdf got converted, now I'm gonna save it!");
         fs.writeFile(__dirname + `/${folderName}/Page${pageNum}.png`, resp.data, err => {
             if (err) {
                 console.log(err);
             } else {
-                console.log("The file was saved!");
-                // if (pageNum === 1)
-                //     returnPage(res, folderName, pageNum);
+                console.log("The image file was saved!");
                 callback(e, folderName, pageNum, deleteIndividualPDF);
             }
         });
@@ -235,7 +236,7 @@ function convertToText(e, folderName, pageNum, callback) {
         });
         fs.writeFile(__dirname + `/${folderName}/${pageNum}.txt`, string, (err) => {
             if (err) { throw err; }
-            console.log('The file has been saved!');
+            console.log('The text file has been saved!');
             callback(e, path, path2);
         });
     })
@@ -244,7 +245,8 @@ function convertToText(e, folderName, pageNum, callback) {
 
 function deleteIndividualPDF(e, path, path2) {
     totalPages++;
-    if (totalPages == (e - 1)) {
+    console.log(totalPages + " when " + (totalPages == (e - 1)) + " of: " + e);
+    if (totalPages > (e - 1)) {
         fs.writeFileSync(path2, "Done!", err => {
             if (err) {
                 console.log(err);
@@ -258,7 +260,7 @@ function deleteIndividualPDF(e, path, path2) {
 }
 
 function decode(string) {
-    let password = 9;
+    let password = "UTCN2018_Cluj_2154142389751152";
     let decryptedMessage = sjcl.decrypt(password.toString(), atob(descramble(string)));
     return JSON.parse(decryptedMessage);
 }
@@ -272,7 +274,7 @@ function descramble(string) {
 
     }
     let zi = new Date();
-    let seg = sum % 13 + 1;
+    let seg = sum % 13 + zi.getHours();
     let contor1 = 0;
     let contor2 = seg;
     let subsir;

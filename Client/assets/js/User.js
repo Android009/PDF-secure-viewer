@@ -19,16 +19,20 @@ function loadPDFsUser() {
     listRequest.onreadystatechange = function() {
         if (listRequest.readyState === 4) {
             pdfList = JSON.parse(listRequest.response);
-            pdfList.forEach(element => {
-                template += `<p class="pdf-link">${element}</p>`;
-            });
+            if (pdfList != null && pdfList != undefined && pdfList.length > 0) {
+                pdfList.forEach(element => {
+                    template += `<p class="pdf-link">${element}</p>`;
+                });
+            } else {
+                template += `<p>No PDF files found</p>`;
+            }
             template += '</div></div>';
             $(".pdf-list-container").html(template);
             addEventsToTitles();
             $(".searchText").on("change paste keyup input", () => {
                 document.querySelectorAll(".pdf-link").forEach((e) => {
                     if ($(".searchText").val() == "") {
-                        e.style.display = "inline-block";
+                        e.style.display = "block";
                     } else if ($(".searchText").val() != undefined && $(".searchText").val() != null) {
                         if (e.innerHTML.indexOf($(".searchText").val()) == -1) {
                             e.style.display = "none";
@@ -71,6 +75,7 @@ function addEventsToPageButtons() {
                 drawGUI(name, parseInt(number), false);
     });
     document.querySelector(".next-button").addEventListener("click", e => {
+        console.log(max);
         if (parseInt(num) + 1 <= max)
             if (sessionStorage.getItem("Searching") == "True")
                 drawGUI(name, parseInt(num) + 1, true);
@@ -149,7 +154,7 @@ function drawGUI(name, num, drawButtons) {
         if (maxPage.readyState === 4) {
             number = JSON.parse(maxPage.response);
             let html = `<div class='fileSearchContainer'><div class="searchButtonsContainer"></div><div class="searchBar"><input type="text" class="fileSearch"><button class="fileSearchBtn">Search</button></div></div>
-            <img class="left-page" src="" />
+            <div class="image-container"><img class="left-page" src="" /></div>
             <div class="fileNavContainer"><button class="prev-button">Prev</button>
             <input type="number" class="numSelector" name="pageNumber" style="width:40px">
             <p style="display:inline">/${number}</p>
@@ -163,7 +168,7 @@ function drawGUI(name, num, drawButtons) {
             sessionStorage.setItem('pageNum', num);
             sessionStorage.setItem('pdfName', name);
 
-            sessionStorage.setItem('totalPages', parseInt(number) - 1);
+            sessionStorage.setItem('totalPages', parseInt(number));
             addEventsToPageButtons();
             addEventsToSearch();
             document.querySelector(".numSelector").value = sessionStorage.getItem('pageNum');
@@ -175,10 +180,9 @@ function drawGUI(name, num, drawButtons) {
 };
 
 function encode(obj) {
-    let password = 9;
+    let password = "UTCN2018_Cluj_2154142389751152";
     let data = JSON.stringify(obj);
     var encryptedMessage = sjcl.encrypt(password.toString(), data);
-    console.log(scramble(btoa(encryptedMessage)));
     return scramble(btoa(encryptedMessage));
 }
 
@@ -189,11 +193,9 @@ function scramble(string) {
     for (let i = 0; i < string.length; i++) {
         if (string[i] >= 0 && string[i] <= 9)
             sum += Number(string[i]);
-
     }
     let zi = new Date();
-    let seg = sum % 13 + 1;
-    console.log(seg);
+    let seg = sum % 13 + zi.getHours();
     let contor1 = 0;
     let contor2 = seg;
     let subsir;
